@@ -6,7 +6,7 @@ const ObjectId = require('mongodb').ObjectId;
 const app = express();
 const port = 3001;
 
-const connectionStringURI = `mongodb://127.0.0.1:27017/inventoryDB`;
+const connectionStringURI = `mongodb://127.0.0.1:27017/inventoryDb`;
 
 let db;
 
@@ -26,7 +26,10 @@ app.use(express.json());
 app.post('/create', (req, res) => {
   // The title and author will be provided by the request body
   db.collection('bookCollection').insertOne(
-    { title: req.body.title, author: req.body.author },
+    {
+      title: req.body.title, 
+      author: req.body.author
+    },
     (err, results) => {
       if (err) throw err;
       res.json(results);
@@ -44,3 +47,12 @@ app.get('/read', (req, res) => {
 });
 
 // TODO: Add Delete route that uses a filter to delete a single document by id
+app.delete('/burn', (req, res) => {
+  db.collection('bookCollection').deleteOne(
+    { '_id': ObjectId(req.body._id) },
+    (err, results) => {
+      if (err) throw err;
+      res.json(results);
+    }
+  )
+})

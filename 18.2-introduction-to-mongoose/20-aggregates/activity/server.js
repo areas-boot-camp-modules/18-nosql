@@ -22,6 +22,7 @@ app.get('/all-books', (req, res) => {
 app.get('/sum-price', (req, res) => {
   Book.aggregate(
     [
+      { $match: { inStock: true } },
       {
         $group: {
           _id: null,

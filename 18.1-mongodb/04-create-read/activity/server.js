@@ -1,9 +1,12 @@
+// Dependencies.
 const express = require('express');
 const mongodb = require('mongodb').MongoClient;
 
+// App.
 const app = express();
 const port = 3001;
 
+// MongoDB.
 const connectionStringURI = `mongodb://127.0.0.1:27017/inventoryDB`;
 
 let db;
@@ -19,8 +22,10 @@ mongodb.connect(
   }
 );
 
+// Middleware.
 app.use(express.json());
 
+// POST /create (addBook).
 app.post('/create', (req, res) => {
   db.collection('bookCollection').insertOne(
     { title: req.body.title, author: req.body.author },
@@ -31,6 +36,7 @@ app.post('/create', (req, res) => {
   );
 });
 
+// POST /create-many (addBooks).
 app.post('/create-many', function (req, res) {
   db.collection('bookCollection').insertMany(
     [
@@ -44,6 +50,7 @@ app.post('/create-many', function (req, res) {
   );
 });
 
+// GET /read (getBooks)
 app.get('/read', (req, res) => {
   db.collection('bookCollection')
     .find({})
