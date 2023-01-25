@@ -3,6 +3,7 @@ const { Post } = require('../models');
 module.exports = {
   getPosts(req, res) {
     Post.find()
+      .populate("tags")
       .then((posts) => res.json(posts))
       .catch((err) => {
         console.error({ message: err });

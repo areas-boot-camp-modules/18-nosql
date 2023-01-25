@@ -22,6 +22,7 @@
 - It scales easily.
 - You can add a schema and change it later without needing to rebuild your entire database.
 
+---
 ### Compass
 - What’s a collection?
 - Mongo doesn’t actually store databases, it stores collections.
@@ -187,19 +188,119 @@ app.get("sum-price", (req, res) => {
 
 ---
 ## 18.3: Advanced Mongoose
+- There are different ways to organizing controllers and routes.
+- Controllers to some are more to control business logic, and may include functions, etc.
+- There are references instead of the actual documents (more on that later).
 
+---
 ### Virtual
+- There is such a thing as a commuted value that’s not stored. Instead, you use a function to compute a value. This is called a virtual.
+- Kind of like a SQL view, but it runs in your code, not on the database server.
+- In the example, we’re creating a comment count that’s not in the database (we’re using comments.length of an array to get that value).
+- This is useful for calculating values when you get make an API call.
+- It helps keep the database lean and clean (storing such values would be difficult and inefficient).
+
+```
+module.exports = {
+	getPosts(req, res) {
+		Post.find()
+			.then(posts) => {
+				const postJson = JSON.stringify(post)
+				const postObj = JSON.stringify(postJson)
+				postObj.extraField = "foo"
+				console.log(postObj)
+			}
+			
+	}
+}
+...
+postSchema.virtual("extraField2").get( function() {
+	console.log("We called the get for extraField2)
+	return "also foo"
+})
+...
+
+```
+
+- There are some similarities to Sequelize hooks (such as beforeCreate). We take care of it in one place and there’s less of an issue.
+- A virtual is part of the schema and at a lower level.
+- Great when you have a value in the database, and can derive something useful that you wouldn’t necessarily want to store in the database.
+- For example, if you want a the first X words of an entry for a blurb.
+- Can be convenient, but not something you have to use.
 
 ---
 ### Subdoc Population
+- A subdoc makes it easier to find something and isolate it.
+- A subdoc contains something that’s similar to a foreign key in SQL.
+- How do you set it up?
+- Use $addToSet in API. Confusing.
+- `-__v` is a document version? It’s a mongoose thing.
+- What is `.populate()`? It’s kind of like include in Sequelize?
+- This is “syntactical sugar.” Kind of like async/await.
+- First, you must update the schema. Then, you use `.populate()` in the API call to populate data (rather than return a reference to an object).
+- It might be better to understand this from the mongo perspective (rather than the mongoose perspective).
+
+```
+const userSchema = new Schema(
+	{
+		first: String,
+		last: String,
+		age: Number,
+		posts: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: "post",
+			}
+		]
+	}
+)
+
+const User = 
+```
 
 ---
 ### CRUD Subdoc
+- Create, read, update, delete on subdocs.
+
+```
+const userSchema = new Schema(
+	{
+		...
+		videos: [
+			{
+				...
+			}		
+		],
+	}
+)
+```
 
 ---
-### GitHub Packages
+### NPM Packages
+- We’re doing NPM packages, instead of GitHub packages (this should be more useful).
+- It’s important to differentiate between prod and dev dependencies.
+- You can also specify versions for the engines, such as node.
+- This would be great for our README generator.
+- We can actually set up a repo to function as a modules/dependency. You don’t even have to add this to npm.
+- To add something to nom, you have to create an account.
+- Publishing to npm is serious. If something is in the registry for longer than 15 minutes, you can’t delete it.
 
 ---
-### Mini-Project
+### Mini-Project Alternative
+- A better mongoose!
+- Requirements:
+	- A nested document is a doc within a doc (nested object).
+	- Sub docs need to be connected with a somehow with a doc.
+	- Schemas are useful, even though MongoDB doesn’t care.
+	- Types of data: integer/number, string, boolean, date.
+
+### MongoDB Atlas (Extra)
+- MongoDB Atlas is like ClearDB for MySQL (for using DBs with something like Heroku).
+- Serverless is edge computing (whatever that means).
+- A cluster is a database?
+- To set this up for Heroku, you have to choose the Cloud Environment option in MongoDB Atlas.
+- There are docs for the deets. This is different than accessing it from your local machine (obviously).
+- In the end, you get the connection string from MongoDB Atlas, and save it in Heroku as an environment variable.
+- Then, in the code, use process.env.MONGO_URL (or whatever you called it).
 
 ---
